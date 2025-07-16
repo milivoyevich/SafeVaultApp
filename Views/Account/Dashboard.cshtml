@@ -1,0 +1,11 @@
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<h2>Welcome, @Html.Encode(User.Identity.Name)</h2>
+<p>Your data is safe inside the vault.</p>
+
+<form asp-action="Logout" method="post">
+    <button type="submit" class="btn btn-danger">Logout</button>
+</form>
+
