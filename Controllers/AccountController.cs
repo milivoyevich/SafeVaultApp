@@ -1,16 +1,20 @@
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using SafeVaultApp.Helpers;
 
 public class AccountController : Controller
 {
-    private readonly InMemoryUserStore _userStore;
+    private readonly ApplicationDbContext _db;
 
-    public AccountController(InMemoryUserStore userStore)
+    public AccountController(ApplicationDbContext db)
     {
-        _userStore = userStore;
+        _db = db;
     }
 
     [HttpGet]
@@ -26,7 +30,8 @@ public class AccountController : Controller
         if (!ModelState.IsValid)
             return View(user);
 
-        var validUser = _userStore.ValidateUser(user.Username, user.Password);
+        var hashedPassword = PasswordHelper.HashPassword(user.Password);
+        var validUser = _db.Users.FirstOrDefault(u => u.Username == user.Username && u.Password == hashedPassword);
         if (validUser != null)
         {
             HttpContext.SignInAsync(
@@ -38,6 +43,28 @@ public class AccountController : Controller
 
         ViewBag.Error = "Invalid credentials";
         return View(user);
+    }
+
+    [HttpGet]
+    public IActionResult Register() => View();
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Register(User user)
+    {
+        if (!ModelState.IsValid)
+            return View(user);
+
+        if (_db.Users.Any(u => u.Username == user.Username))
+        {
+            ViewBag.Error = "Username already exists.";
+            return View(user);
+        }
+
+        user.Password = PasswordHelper.HashPassword(user.Password);
+        _db.Users.Add(user);
+        _db.SaveChanges();
+        return RedirectToAction("Login");
     }
 
     [Authorize]
