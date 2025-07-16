@@ -12,4 +12,11 @@ public class User
 
     [Required]
     public string Password { get; set; }
+
+    [NotMapped]
+    [Compare("Password", ErrorMessage = "Passwords do not match.")]
+    public string ConfirmPassword { get; set; }
+
+    [Required]
+    public string Role { get; set; } // e.g. "Admin", "User"
 }

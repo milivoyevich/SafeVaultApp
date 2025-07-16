@@ -12,9 +12,26 @@
         <input asp-for="Password" type="password" class="form-control" />
         <span asp-validation-for="Password" class="text-danger"></span>
     </div>
+    <div>
+        <label asp-for="ConfirmPassword"></label>
+        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Role"></label>
+        <select asp-for="Role" class="form-control">
+            <option value="">Select Role</option>
+            <option value="User">User</option>
+            <option value="Admin">Admin</option>
+        </select>
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
     <button type="submit" class="btn btn-primary">Register</button>
 </form>
 @if (ViewBag.Error != null)
 {
     <div class="text-danger">@Html.Encode(ViewBag.Error)</div>
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
