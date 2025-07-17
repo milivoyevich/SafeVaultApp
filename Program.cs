@@ -1,6 +1,13 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        // Application startup code
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -49,3 +56,6 @@ app.MapControllerRoute(
 
 
 app.Run();
+
+    }
+}
